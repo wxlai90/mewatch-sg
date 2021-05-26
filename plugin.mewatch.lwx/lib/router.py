@@ -29,10 +29,15 @@ routes = {
     '__handle_show_id_resolve': __handle_show_id_resolve,
 }
 
+def Controller(cls):
+    funcs = [i for i in dir(cls) if callable(getattr(cls, i)) and not i.startswith('__')]
 
-def register(path, func):
-    routes[path] = func
-    print(routes)
+    for func in funcs:
+        if func in routes:
+            raise Exception("Duplicate routes defined! Make sure all handler function names are unique!")
+        routes[func] = getattr(cls, func)
+
+    print('routes:', routes)
 
 
 def _decodeParams(query_string):
