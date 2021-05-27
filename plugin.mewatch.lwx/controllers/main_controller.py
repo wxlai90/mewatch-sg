@@ -17,6 +17,9 @@ class MainController:
     def landing_screen(params = None):
         items = [Item(name="Search", description="Search for a show", params={'path': 'searchAndDisplayResults'})]
 
+        if not params:
+            return items, None
+
         if 'searchTerm' in params:
             # coming from page listing, url encoded, decode to get correct search term
             searchTerm = url_decode(params['searchTerm'])
@@ -26,7 +29,6 @@ class MainController:
             
             return resultsPages.items, None
 
-        # return None to use default title
         return items, None
 
 
@@ -34,7 +36,7 @@ class MainController:
     def searchAndDisplayResults(params = None):
         searchTerm = get_user_input(prompt='Search for a show')
         if not searchTerm:
-            return
+            return [], None
 
         resultsPages = search(searchTerm)
 
