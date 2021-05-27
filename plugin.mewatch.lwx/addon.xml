@@ -8,8 +8,13 @@
   <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
   </extension>
+
   <extension point="xbmc.addon.metadata">
     <summary lang="en">MeWatch Kodi Plugin</summary>
     <description lang="en_GB">Plugin for playing MeWatch Shows On Demand</description>
+
+    <assets>
+      <icon>resources/icon.png</icon>
+    </assets>
   </extension>
 </addon>
