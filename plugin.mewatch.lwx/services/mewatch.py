@@ -7,19 +7,21 @@ from models.item import Item
 from resolvers.mewatch import resolvePage, resolveSearch, resolveShows
 
 
-def getPage(show_path: str) -> Page:
+def getPage(show_path: str, searchTerm: str) -> Page:
     api_response = resolvePage(show_path)
 
     raw_episodes = api_response['item']['episodes']['items']
     
     paging = api_response['item']['episodes']['paging']
 
+    items = [Item(name="Back to search results", description="Back to search results", params={'path': 'landing_screen', 'searchTerm': searchTerm})]
+
     if 'next' in paging:
         # there are more than 1 page to resolve
         season_id = api_response['item']['id']
         raw_episodes = _paginationSearch(season_id, 2, raw_episodes)
 
-    items = [Item(name=i['episodeName'], description= i['shortDescription'], image=i['images']['tile'],to_play=i['offers'][0]['scopes'][0]) for i in raw_episodes]
+    items += [Item(name=i['episodeName'], description= i['shortDescription'], image=i['images']['tile'],to_play=i['offers'][0]['scopes'][0]) for i in raw_episodes]
 
     page = Page(title = api_response['title'], items = items)
 
@@ -73,10 +75,10 @@ def search(searchTerm: str) -> Page:
             # more than one season, traverse and find all shows in a season before listing
             pageJSON = resolvePage(result['path'])
             seasons = pageJSON['item']['show']['seasons']['items']
-            items += [Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path']}) for season in seasons]
+            items += [Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in seasons]
         else:
             # only one season, display show directly
-            items += [Item(name=i['secondaryLanguageTitle'] if 'secondaryLanguageTitle' in i else i['title'], description=i['shortDescription'], image=i['images']['tile'], params={'path':'listShowEpisodes', 'show_path': i['path']}) for i in tv_items]
+            items += [Item(name=i['secondaryLanguageTitle'] if 'secondaryLanguageTitle' in i else i['title'], description=i['shortDescription'], image=i['images']['tile'], params={'path':'listShowEpisodes', 'show_path': i['path'], 'searchTerm': searchTerm}) for i in tv_items]
 
     page = Page(title = f'Search Results for {searchTerm}', items = items)
 
