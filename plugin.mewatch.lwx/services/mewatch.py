@@ -95,12 +95,13 @@ def resolveShowIdToVideo(show_id) -> Playable:
         if show['name'] == 'HLS_Web':
             selected_source = show['url']
 
-        # older shows have no subtitles
+      # older shows have no subtitles
         if 'subtitles' in show:
-            if show['subtitles']['English'] not in selected_subs:
-                selected_subs.append(show['subtitles']['English'])
+           for _, subtitle in show['subtitles'].items(): 
+              if subtitle not in selected_subs:
+                selected_subs.append(subtitle)
 
-        
+
     playable = Playable(url = selected_source, subtitles = selected_subs)
 
     return playable
