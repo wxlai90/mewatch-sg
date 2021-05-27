@@ -29,6 +29,22 @@ def _resolveDestination(show_id):
     return f'{_baseUrl}#?&path=__handle_show_id_resolve&show_id={show_id}'
 
 
+def action(**kwargs):
+    '''
+        decorator
+        @params results_in, for now only screen
+    '''
+    results_in = kwargs['results_in'] 
+    def my_decorator(func):
+        def wrapper(*args, **kwargs):
+            items, title = func(*args, **kwargs)
+
+            if results_in == 'screen':
+                createScreen(items, title)
+            
+            return items
+        return wrapper
+    return my_decorator
 
 
 def createScreen(items: List[Item], screenTitle:str = None) -> None:
