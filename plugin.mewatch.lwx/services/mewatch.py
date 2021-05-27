@@ -59,8 +59,23 @@ def search(searchTerm: str) -> Page:
     # TODO: iterate through all possible fields instead of using only tv
     tv_items = search_results['tv']['items']
 
-    # for shows in languages other than english, use the secondary title
-    items = [Item(name=i['secondaryLanguageTitle'] if 'secondaryLanguageTitle' in i else i['title'], description=i['shortDescription'], image=i['images']['tile'], params={'path':'listShowEpisodes', 'show_path': i['path']}) for i in tv_items]
+
+    if len(tv_items) == 0:
+    # no search results found
+        return Page(title = f'Search Results for {searchTerm}', items = [])
+
+
+    multiple_seasons = tv_items[0]['availableSeasonCount'] > 1
+
+    if multiple_seasons:
+        # more than one season, traverse and find all shows in a season before listing
+        pageJSON = resolvePage(tv_items[0]['path'])
+        seasons = pageJSON['item']['show']['seasons']['items']
+        items = []
+        items = [Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path']}) for season in seasons]
+    else:
+        # only one season, display show directly
+        items = [Item(name=i['secondaryLanguageTitle'] if 'secondaryLanguageTitle' in i else i['title'], description=i['shortDescription'], image=i['images']['tile'], params={'path':'listShowEpisodes', 'show_path': i['path']}) for i in tv_items]
 
     page = Page(title = f'Search Results for {searchTerm}', items = items)
 
