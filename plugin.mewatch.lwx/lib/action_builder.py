@@ -35,7 +35,7 @@ def createScreen(items: List[Item], screenTitle:str = None) -> None:
     ''' Takes in a List of Item DTO and creates a screen with them '''
 
     # sets the title
-    _screen.setPluginCategory(_handle, screenTitle if screenTitle else 'MeWatch')
+    _screen.setPluginCategory(_handle, screenTitle if screenTitle else 'meWATCH')
 
     # sets the type, blanket videos for all videos type
     _screen.setContent(_handle, 'videos')
