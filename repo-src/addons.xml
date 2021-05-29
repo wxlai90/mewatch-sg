@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<addons><addon id="plugin.mewatch.lwx" version="1.0.0" name="meWATCH" provider-name="lwx">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0" />
+    <import addon="script.module.requests" version="2.22.0+matrix.1" />
+  </requires>
+
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">meWATCH Kodi Plugin</summary>
+    <description lang="en_GB">Plugin for playing meWATCH Shows On Demand</description>
+
+    <assets>
+      <icon>resources/icon.png</icon>
+    </assets>
+  </extension>
+</addon></addons>
