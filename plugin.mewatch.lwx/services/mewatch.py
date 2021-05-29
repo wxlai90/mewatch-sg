@@ -67,6 +67,7 @@ def search(searchTerm: str) -> Page:
         return Page(title = f'Search Results for {searchTerm}', items = [])
 
     items = []
+    seen = set()
 
     for result in tv_items:
         multiple_seasons = result['availableSeasonCount'] > 1
@@ -75,10 +76,10 @@ def search(searchTerm: str) -> Page:
             # more than one season, traverse and find all shows in a season before listing
             pageJSON = resolvePage(result['path'])
             seasons = pageJSON['item']['show']['seasons']['items']
-            items += [Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in seasons]
+            items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in seasons if season['path'] not in seen]
         else:
             # only one season, display show directly
-            items += [Item(name=i['secondaryLanguageTitle'] if 'secondaryLanguageTitle' in i else i['title'], description=i['shortDescription'], image=i['images']['tile'], params={'path':'listShowEpisodes', 'show_path': i['path'], 'searchTerm': searchTerm}) for i in tv_items]
+            items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in tv_items if season['path'] not in seen]
 
     page = Page(title = f'Search Results for {searchTerm}', items = items)
 
