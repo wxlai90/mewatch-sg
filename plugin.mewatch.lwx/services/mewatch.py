@@ -79,7 +79,7 @@ def search(searchTerm: str) -> Page:
             items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in seasons if season['path'] not in seen]
         else:
             # only one season, display show directly
-            items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in tv_items if season['path'] not in seen]
+            items = [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in tv_items if season['path'] not in seen]
 
     page = Page(title = f'Search Results for {searchTerm}', items = items)
 
