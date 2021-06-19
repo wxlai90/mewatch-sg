@@ -58,19 +58,31 @@ def _paginationSearch(season_id: int, page_no: int, previous: list) -> List[dict
 def search(searchTerm: str) -> Page:
     search_results = resolveSearch(searchTerm)
 
-    # TODO: iterate through all possible fields instead of using only tv
-    tv_items = search_results['tv']['items']
+    all_items = []
+
+    all_categories = [
+        'extras',
+        'movies',
+        'sports',
+        'tv'
+    ]
+
+    for cat in all_categories:
+        all_items += search_results[cat]['items']
 
 
-    if len(tv_items) == 0:
+    if len(all_items) == 0:
     # no search results found
         return Page(title = f'Search Results for {searchTerm}', items = [])
 
     items = []
     seen = set()
 
-    for result in tv_items:
-        multiple_seasons = result['availableSeasonCount'] > 1
+    for result in all_items:
+        multiple_seasons = False
+
+        if 'availableSeasonCount' in result:
+            multiple_seasons = result['availableSeasonCount'] > 1
 
         if multiple_seasons:
             # more than one season, traverse and find all shows in a season before listing
@@ -79,7 +91,7 @@ def search(searchTerm: str) -> Page:
             items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in seasons if season['path'] not in seen]
         else:
             # only one season, display show directly
-            items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in tv_items if season['path'] not in seen]
+            items += [seen.add(season['path']) or Item(name=season['title'], description=season['shortDescription'], image=season['images']['tile'], params={'path': 'listShowEpisodes', 'show_path': season['path'], 'searchTerm': searchTerm}) for season in all_items if season['path'] not in seen]
 
     page = Page(title = f'Search Results for {searchTerm}', items = items)
 
